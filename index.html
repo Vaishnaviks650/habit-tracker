@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Habit Tracker</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#667eea;
+    padding:20px;
+}
+
+.container{
+    max-width:500px;
+    margin:auto;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+}
+
+h1{
+    text-align:center;
+}
+
+input{
+    width:70%;
+    padding:10px;
+}
+
+button{
+    padding:10px;
+}
+
+li{
+    margin:10px 0;
+    list-style:none;
+    background:#f1f1f1;
+    padding:10px;
+    border-radius:8px;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>Habit Tracker</h1>
+
+<input
+type="text"
+id="habitInput"
+placeholder="Enter Habit">
+
+<button onclick="addHabit()">
+Add
+</button>
+
+<ul id="habitList"></ul>
+
+</div>
+
+<script>
+
+function addHabit(){
+
+let habit =
+document.getElementById("habitInput").value;
+
+if(habit===""){
+alert("Enter a habit");
+return;
+}
+
+let li =
+document.createElement("li");
+
+li.innerHTML=`
+<input type="checkbox">
+${habit}
+`;
+
+document
+.getElementById("habitList")
+.appendChild(li);
+
+document
+.getElementById("habitInput")
+.value="";
+
+}
+
+</script>
+
+</body>
+</html>
