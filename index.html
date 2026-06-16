@@ -1,66 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Habit Tracker</title>
 
 <style>
-body{
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
     font-family:Arial,sans-serif;
-    background:#667eea;
+}
+
+body{
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     padding:20px;
 }
 
 .container{
+    width:100%;
     max-width:500px;
-    margin:auto;
     background:white;
-    padding:20px;
-    border-radius:10px;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
 h1{
     text-align:center;
+    margin-bottom:20px;
 }
 
-input{
-    width:70%;
-    padding:10px;
+.input-box{
+    display:flex;
+    gap:10px;
+}
+
+input[type="text"]{
+    flex:1;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
 }
 
 button{
-    padding:10px;
+    padding:12px 15px;
+    border:none;
+    border-radius:8px;
+    background:#667eea;
+    color:white;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#5563d6;
+}
+
+ul{
+    margin-top:20px;
 }
 
 li{
-    margin:10px 0;
     list-style:none;
-    background:#f1f1f1;
-    padding:10px;
+    background:#f4f4f4;
+    margin-bottom:10px;
+    padding:12px;
     border-radius:8px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.completed{
+    text-decoration:line-through;
+    color:gray;
+}
+
+.delete-btn{
+    background:red;
+    padding:5px 10px;
+}
+
+.stats{
+    margin-top:20px;
+    text-align:center;
+    font-weight:bold;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
 
-<h1>Habit Tracker</h1>
+<h1>🔥 Habit Tracker</h1>
 
+<div class="input-box">
 <input
 type="text"
 id="habitInput"
-placeholder="Enter Habit">
+placeholder="Enter a habit">
 
 <button onclick="addHabit()">
 Add
 </button>
+</div>
+
+<div class="stats">
+Completed: <span id="completedCount">0</span>
+</div>
 
 <ul id="habitList"></ul>
 
 </div>
 
 <script>
+
+let habits =
+JSON.parse(localStorage.getItem("habits")) || [];
+
+renderHabits();
 
 function addHabit(){
 
@@ -72,22 +136,88 @@ alert("Enter a habit");
 return;
 }
 
+habits.push({
+text:habit,
+done:false
+});
+
+saveHabits();
+
+document.getElementById("habitInput").value="";
+
+renderHabits();
+}
+
+function renderHabits(){
+
+let list =
+document.getElementById("habitList");
+
+list.innerHTML="";
+
+let completed=0;
+
+habits.forEach((habit,index)=>{
+
+if(habit.done){
+completed++;
+}
+
 let li =
 document.createElement("li");
 
 li.innerHTML=`
-<input type="checkbox">
-${habit}
+<div>
+<input
+type="checkbox"
+${habit.done ? "checked" : ""}
+onchange="toggleHabit(${index})">
+
+<span class="${habit.done ? "completed" : ""}">
+${habit.text}
+</span>
+</div>
+
+<button
+class="delete-btn"
+onclick="deleteHabit(${index})">
+❌
+</button>
 `;
 
-document
-.getElementById("habitList")
-.appendChild(li);
+list.appendChild(li);
+});
 
-document
-.getElementById("habitInput")
-.value="";
+document.getElementById(
+"completedCount"
+).textContent = completed;
+}
 
+function toggleHabit(index){
+
+habits[index].done =
+!habits[index].done;
+
+saveHabits();
+
+renderHabits();
+}
+
+function deleteHabit(index){
+
+habits.splice(index,1);
+
+saveHabits();
+
+renderHabits();
+}
+
+function saveHabits(){
+
+localStorage.setItem(
+"habits",
+JSON.stringify(habits)
+);
 }
 
 </script>
