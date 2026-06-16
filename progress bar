@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Tracker</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#667eea,#764ba2);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.container{
+width:100%;
+max-width:500px;
+background:white;
+padding:25px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+margin-bottom:20px;
+}
+
+.input-box{
+display:flex;
+gap:10px;
+}
+
+input[type="text"]{
+flex:1;
+padding:12px;
+border:1px solid #ccc;
+border-radius:8px;
+}
+
+button{
+padding:12px 15px;
+border:none;
+border-radius:8px;
+background:#667eea;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#5563d6;
+}
+
+ul{
+margin-top:20px;
+}
+
+li{
+list-style:none;
+background:#f4f4f4;
+margin-bottom:10px;
+padding:12px;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.completed{
+text-decoration:line-through;
+color:gray;
+}
+
+.delete-btn{
+background:red;
+padding:5px 10px;
+}
+
+.stats{
+margin-top:20px;
+text-align:center;
+font-weight:bold;
+}
+
+.progress-container{
+width:100%;
+height:20px;
+background:#ddd;
+border-radius:20px;
+margin-top:15px;
+overflow:hidden;
+}
+
+#progressBar{
+height:100%;
+width:0%;
+background:#4CAF50;
+transition:0.3s;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🔥 Habit Tracker</h1>
+
+<div class="input-box">
+<input type="text" id="habitInput" placeholder="Enter a habit">
+<button onclick="addHabit()">Add</button>
+</div>
+
+<div class="stats">
+Completed: <span id="completedCount">0</span>
+</div>
+
+<div class="progress-container">
+<div id="progressBar"></div>
+</div>
+
+<ul id="habitList"></ul>
+
+</div>
+
+<script>
+
+let habits =
+JSON.parse(localStorage.getItem("habits")) || [];
+
+renderHabits();
+
+function addHabit(){
+
+let habit =
+document.getElementById("habitInput").value;
+
+if(habit===""){
+alert("Enter a habit");
+return;
+}
+
+habits.push({
+text:habit,
+done:false
+});
+
+saveHabits();
+
+document.getElementById("habitInput").value="";
+
+renderHabits();
+}
+
+function renderHabits(){
+
+let list =
+document.getElementById("habitList");
+
+list.innerHTML="";
+
+let completed=0;
+
+habits.forEach((habit,index)=>{
+
+if(habit.done){
+completed++;
+}
+
+let li =
+document.createElement("li");
+
+li.innerHTML=`
+<div>
+<input
+type="checkbox"
+${habit.done ? "checked" : ""}
+onchange="toggleHabit(${index})">
+
+<span class="${habit.done ? "completed" : ""}">
+${habit.text}
+</span>
+</div>
+
+<button
+class="delete-btn"
+onclick="deleteHabit(${index})">
+❌
+</button>
+`;
+
+list.appendChild(li);
+});
+
+document.getElementById("completedCount").textContent =
+completed;
+
+let percentage = 0;
+
+if(habits.length > 0){
+percentage =
+(completed / habits.length) * 100;
+}
+
+document.getElementById("progressBar").style.width =
+percentage + "%";
+}
+
+function toggleHabit(index){
+
+habits[index].done =
+!habits[index].done;
+
+saveHabits();
+
+renderHabits();
+}
+
+function deleteHabit(index){
+
+habits.splice(index,1);
+
+saveHabits();
+
+renderHabits();
+}
+
+function saveHabits(){
+
+localStorage.setItem(
+"habits",
+JSON.stringify(habits)
+);
+}
+
+</script>
+
+</body>
+</html>
